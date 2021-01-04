@@ -46,6 +46,7 @@ class quagga (
     enable    => true,
     hasstatus => false,
     status    => '/usr/local/bin/quagga_status.sh',
+    start     => 'systemctl restart quagga',
     require   => [
       Package[ $package ],
       File['/etc/quagga/zebra.conf', '/usr/local/bin/quagga_status.sh']
