@@ -70,7 +70,6 @@ class quagga::bgpd (
   exec{ "/usr/bin/touch ${conf_file}":
     creates => $conf_file,
     user    => $::quagga::owner,
-    umask   => '137',
     before  => Concat[$conf_file],
   }
   if $stage_config {
@@ -78,6 +77,7 @@ class quagga::bgpd (
       require      => Package[ $::quagga::package ],
       owner        => $::quagga::owner,
       group        => $::quagga::group,
+      mode         => $::quagga::mode,
       validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
     }
   } else {
@@ -86,6 +86,7 @@ class quagga::bgpd (
       notify       => Service[ $::quagga::service ],
       owner        => $::quagga::owner,
       group        => $::quagga::group,
+      mode         => $::quagga::mode,
       validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
     }
   }
