@@ -70,6 +70,7 @@ class quagga::bgpd (
   exec{ "/usr/bin/touch ${conf_file}":
     creates => $conf_file,
     user    => $::quagga::owner,
+    umask   => '137',
     before  => Concat[$conf_file],
   }
   if $stage_config {

@@ -36,6 +36,11 @@ class quagga (
     mode    => '0555',
     content => template('quagga/quagga_status.sh.erb'),
   }
+  file {'/etc/quagga/vtysh.conf':
+    ensure => file,
+    mode   => $mode,
+    source => 'puppet:///modules/quagga/vtysh.conf',
+  }
   file {'/etc/profile.d/vtysh.sh':
     ensure => file,
     source => 'puppet:///modules/quagga/vtysh.sh',
