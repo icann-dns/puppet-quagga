@@ -45,7 +45,7 @@ class quagga::bgpd (
   Ini_setting {
     path    => '/etc/quagga/daemons',
     section => '',
-    notify  => Service['quagga'],
+    notify  => Service[ $::quagga::service ],
     require => Package[ $::quagga::package ],
   }
   if $enable {
@@ -77,14 +77,16 @@ class quagga::bgpd (
       require      => Package[ $::quagga::package ],
       owner        => $::quagga::owner,
       group        => $::quagga::group,
+      mode         => $::quagga::mode,
       validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
     }
   } else {
     concat{$conf_file:
       require      => Package[ $::quagga::package ],
-      notify       => Service['quagga'],
+      notify       => Service[ $::quagga::service ],
       owner        => $::quagga::owner,
       group        => $::quagga::group,
+      mode         => $::quagga::mode,
       validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
     }
   }
