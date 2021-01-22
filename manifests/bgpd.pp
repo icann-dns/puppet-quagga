@@ -4,6 +4,7 @@ class quagga::bgpd (
   Integer[1,4294967295]           $my_asn                   = undef,
   Stdlib::Ipv4                    $router_id                = undef,
   Boolean                         $enable                   = true,
+  String                          $service                  = ::quagga::service,
   Boolean                         $stage_config             = false,
   Optional[Array[Tea::Ipv4_cidr]] $networks4                = [],
   Optional[Array[Tea::Ipv4_cidr]] $failsafe_networks4       = [],
@@ -83,7 +84,7 @@ class quagga::bgpd (
   } else {
     concat{$conf_file:
       require      => Package[ $::quagga::package ],
-      notify       => Service[ $::quagga::service ],
+      notify       => Service[ $service ],
       owner        => $::quagga::owner,
       group        => $::quagga::group,
       mode         => $::quagga::mode,
