@@ -73,6 +73,13 @@ class quagga::bgpd (
     user    => $::quagga::owner,
     before  => Concat[$conf_file],
   }
+  if $::quagga::service != $service {
+    service { $service:
+      ensure  => running,
+      enable  => true,
+      require => Concat[$conf_file],
+    }
+  }
   if $stage_config {
     concat{$conf_file:
       require      => Package[ $::quagga::package ],
