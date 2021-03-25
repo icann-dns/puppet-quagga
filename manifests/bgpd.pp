@@ -73,7 +73,7 @@ class quagga::bgpd (
     user    => $::quagga::owner,
     before  => Concat[$conf_file],
   }
-  if $::lsbdistcodename == 'bionic'{
+  if $::quagga::service != $service {
     service { $service:
       ensure  => running,
       enable  => true,
