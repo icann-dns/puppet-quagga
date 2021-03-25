@@ -4,7 +4,7 @@ class quagga::bgpd (
   Integer[1,4294967295]           $my_asn                   = undef,
   Stdlib::Ipv4                    $router_id                = undef,
   Boolean                         $enable                   = true,
-  String                          $service                  = ::quagga::service,
+  String                          $service                  = $::quagga::service,
   Boolean                         $stage_config             = false,
   Optional[Array[Tea::Ipv4_cidr]] $networks4                = [],
   Optional[Array[Tea::Ipv4_cidr]] $failsafe_networks4       = [],
