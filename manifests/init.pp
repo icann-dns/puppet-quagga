@@ -45,7 +45,6 @@ class quagga (
     ensure => file,
     source => 'puppet:///modules/quagga/vtysh.sh',
   }
-
   service { $service:
     ensure    => running,
     enable    => true,
