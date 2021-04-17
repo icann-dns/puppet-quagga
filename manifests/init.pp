@@ -2,14 +2,14 @@
 #
 # Quagga routing server.
 class quagga (
-  String                       $owner   = 'quagga',
-  String                       $group   = 'quagga',
-  Pattern[/^\d+$/]             $mode    = '0664',
-  String                       $package = 'quagga',
-  String                       $service = 'quagga',
-  Boolean                      $enable  = true,
-  String                       $content = $::quagga::params::content,
-  Optional[Stdlib::Ip_address] $bgp_listenon = undef
+  String                        $owner   = 'quagga',
+  String                        $group   = 'quagga',
+  Pattern[/^\d+$/]              $mode    = '0664',
+  String                        $package = 'quagga',
+  String                        $service = 'quagga',
+  Boolean                       $enable  = true,
+  String                        $content = $::quagga::params::content,
+  Optional[Stdlib::Ip::Address] $bgp_listenon = undef
 ) inherits ::quagga::params {
 
   ensure_packages([$package])
