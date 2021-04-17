@@ -2,7 +2,7 @@
 #
 class quagga::bgpd (
   Integer[1,4294967295]           $my_asn                   = undef,
-  tdlib::Compat::Ipv4             $router_id                = undef,
+  Stdlib::Compat::Ipv4            $router_id                = undef,
   Boolean                         $enable                   = true,
   Boolean                         $service                  = false,
   Boolean                         $stage_config             = false,
