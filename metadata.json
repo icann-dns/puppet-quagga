@@ -1,6 +1,6 @@
 {
   "name": "icann-quagga",
-  "version": "0.5.2",
+  "version": "0.5.9",
   "author": "john.bond@icann.org",
   "summary": "puppet module to manage Quagga",
   "license": "Apache-2.0",
@@ -35,6 +35,7 @@
       "operatingsystemrelease": [
         "14.04",
         "16.04"
+        "18.04"
       ]
     }
   ],

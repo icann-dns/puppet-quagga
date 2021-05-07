@@ -9,7 +9,7 @@ class quagga (
   String                        $service = 'quagga',
   Boolean                       $enable  = true,
   String                        $content = $::quagga::params::content,
-  Optional[Stdlib::Ip::Address] $bgp_listenon = undef
+  Optional[Stdlib::IP::Address] $bgp_listenon = undef
 ) inherits ::quagga::params {
 
   ensure_packages([$package])
