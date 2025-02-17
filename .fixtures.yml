@@ -6,6 +6,6 @@ fixtures:
       concat: https://github.com/puppetlabs/puppetlabs-concat
       inifile: https://github.com/puppetlabs/puppetlabs-inifile
       logrotate: https://github.com/voxpupuli/puppet-logrotate
-      tea: https://github.com/icann-dns/puppet-tea.git
+      systemd: https://github.com/voxpupuli/puppet-systemd
     forge_modules:
 

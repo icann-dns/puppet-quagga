@@ -1,3 +1,4 @@
+# @summary Quagga routes acl
 type Quagga::Routes_acl = Enum[
   'all',
   'none',

@@ -16,7 +16,7 @@ describe 'quagga class multi peers' do
   router3_ip6 = '2001:db8:1::3'
   router3_asn = '64498'
   ipv6_network = '2001:db8:1::/64'
-  ipv4_network = router1_ip.sub(%r{\d+$}, '0/24')
+  ipv4_network = '10.0.0.0/24'
   on(router1, 'sysctl net.ipv6.conf.all.disable_ipv6=0')
   on(router2, 'sysctl net.ipv6.conf.all.disable_ipv6=0')
   on(router3, 'sysctl net.ipv6.conf.all.disable_ipv6=0')
@@ -31,6 +31,7 @@ describe 'quagga class multi peers' do
       router_id => '#{router1_ip}',
       networks4 => [ '#{ipv4_network}'],
       networks6 => [ '#{ipv6_network}'],
+      enable_advertisements => false,
       reject_bogons_v4 => false,
       reject_bogons_v6 => false,
       peers => {
@@ -50,10 +51,11 @@ describe 'quagga class multi peers' do
     pp2 = <<-EOF
     class { '::quagga': }
     class { '::quagga::bgpd':
-      my_asn => #{router2_asn},
-      router_id => '#{router2_ip}',
-      networks4 => [ '#{ipv4_network}'],
-      networks6 => [ '#{ipv6_network}'],
+      my_asn                   => #{router2_asn},
+      router_id                => '#{router2_ip}',
+      networks4                => [ '#{ipv4_network}'],
+      networks6                => [ '#{ipv6_network}'],
+      enable_advertisements_v4 => false,
       reject_bogons_v4 => false,
       reject_bogons_v6 => false,
       peers => {
@@ -68,10 +70,11 @@ describe 'quagga class multi peers' do
     pp3 = <<-EOF
     class { '::quagga': }
     class { '::quagga::bgpd':
-      my_asn => #{router3_asn},
-      router_id => '#{router3_ip}',
-      networks4 => [ '#{ipv4_network}'],
-      networks6 => [ '#{ipv6_network}'],
+      my_asn                   => #{router3_asn},
+      router_id                => '#{router3_ip}',
+      networks4                => [ '#{ipv4_network}'],
+      networks6                => [ '#{ipv6_network}'],
+      enable_advertisements_v6 => false,
       reject_bogons_v4 => false,
       reject_bogons_v6 => false,
       peers => {
@@ -88,75 +91,113 @@ describe 'quagga class multi peers' do
       apply_manifest_on(router2, pp2, catch_failures: true)
       apply_manifest_on(router3, pp3, catch_failures: true)
     end
-    it 'clean puppet run' do
+
+    it 'r1 clean puppet run' do
       expect(apply_manifest(pp1, catch_failures: true).exit_code).to eq 0
     end
+
     it 'r2 clean puppet run' do
       expect(apply_manifest_on(router2, pp2, catch_failures: true).exit_code).to eq 0
     end
+
     it 'r3 clean puppet run' do
       expect(apply_manifest_on(router3, pp3, catch_failures: true).exit_code).to eq 0
       # allow peers to configure and establish
       sleep(10)
     end
+
     describe command('cat /etc/quagga/bgpd.conf 2>&1') do
       its(:stdout) { is_expected.to match(%r{}) }
     end
+
     describe service('quagga') do
       it { is_expected.to be_running }
     end
+
     describe process('bgpd') do
       its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
+
     describe port(179) do
       it { is_expected.to be_listening }
     end
+
     describe command("ping -c 1 #{router2_ip}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command("ping -c 1 #{router3_ip}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command("ping6 -I eth0 -c 1 #{router2_ip6}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command("ping6 -I eth0 -c 1 #{router3_ip6}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command('vtysh -c \'show ip bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router2_ip}\s+4\s+#{router2_asn}}) }
       its(:stdout) { is_expected.to match(%r{#{router3_ip}\s+4\s+#{router3_asn}}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router3_ip}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router3_ip}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip} advertised-routes\'") do
-      its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router1_ip}\s+\d+\s+\d+\s+i}) }
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip} advertised-routes'") do
+      its(:stdout) { is_expected.not_to match(%r{#{ipv4_network}\s+#{router1_ip}\s+\d+\s+\d+\s+i}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router3_ip} advertised-routes\'") do
-      its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router1_ip}\s+\d+\s+\d+\s+i}) }
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router3_ip} advertised-routes'") do
+      its(:stdout) { is_expected.not_to match(%r{#{ipv4_network}\s+#{router1_ip}\s+\d+\s+\d+\s+i}) }
     end
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip} received-routes'") do
+      its(:stdout) { is_expected.not_to match(%r{#{ipv4_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}\si}) }
+    end
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router3_ip} received-routes'") do
+      its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router3_ip}\s+\d+\s+\d+\s+#{router3_asn}\si}) }
+    end
+
     describe command('vtysh -c \'show ipv6 bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router2_ip6}\s+4\s+#{router2_asn}}i) }
     end
+
     describe command('vtysh -c \'show ipv6 bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router3_ip6}\s+4\s+#{router3_asn}}i) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip6}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip6}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router3_ip6}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router3_ip6}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ipv6 bgp neighbors #{router2_ip6} advertised-routes\'") do
-      its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router1_ip6}\s+0\s+32768\s+i}) }
+
+    describe command("vtysh -c 'show ipv6 bgp neighbors #{router2_ip6} advertised-routes'") do
+      its(:stdout) { is_expected.not_to match(%r{#{ipv6_network}\s+#{router1_ip6}\s+0\s+32768\s+i}) }
     end
-    describe command("vtysh -c \'show ipv6 bgp neighbors #{router3_ip6} advertised-routes\'") do
-      its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router1_ip6}\s+0\s+32768\s+i}) }
+
+    describe command("vtysh -c 'show ipv6 bgp neighbors #{router3_ip6} advertised-routes'") do
+      its(:stdout) { is_expected.not_to match(%r{#{ipv6_network}\s+#{router1_ip6}\s+0\s+32768\s+i}) }
+    end
+
+    describe command("vtysh -c 'show ipv6 bgp neighbors #{router2_ip6} received-routes'") do
+      its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}\si}) }
+    end
+
+    describe command("vtysh -c 'show ipv6 bgp neighbors #{router3_ip6} received-routes'") do
+      its(:stdout) { is_expected.not_to match(%r{#{ipv6_network}\s+#{router3_ip6}\s+\d+\s+\d+\s+#{router3_asn}\si}) }
     end
   end
 end

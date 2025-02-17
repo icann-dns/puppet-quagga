@@ -17,6 +17,8 @@ end
 
 group :system_tests do
   gem 'voxpupuli-acceptance', '~> 3.0',  :require => false
+  gem 'beaker-testmode_switcher',        :require => false
+  gem 'beaker-pe',                       :require => false
 end
 
 group :release do

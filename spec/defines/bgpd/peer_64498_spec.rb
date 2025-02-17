@@ -31,37 +31,40 @@ describe 'quagga::bgpd::peer' do
         # Puppet::Util::Log.newdestination(:console)
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_class('Quagga::Bgpd') }
+
         it do
           is_expected.to contain_concat__fragment('bgpd_peer_64498').with(
             order: '10',
-            target: '/etc/quagga/bgpd.conf',
+            target: '/etc/quagga/bgpd.conf'
           ).with_content(
-            %r{neighbor 192.0.2.2 remote-as 64498},
+            %r{neighbor 192.0.2.2 remote-as 64498}
           ).with_content(
-            %r{neighbor 192.0.2.2 description TEST Network},
+            %r{neighbor 192.0.2.2 description TEST Network}
           ).with_content(
-            %r{neighbor 192.0.2.2 soft-reconfiguration inbound},
+            %r{neighbor 192.0.2.2 soft-reconfiguration inbound}
           ).with_content(
-            %r{neighbor 192.0.2.2 prefix-list prefix-v4 out},
+            %r{neighbor 192.0.2.2 prefix-list prefix-v4 out}
           ).with_content(
-            %r{neighbor 192.0.2.2 prefix-list deny in},
+            %r{neighbor 192.0.2.2 prefix-list deny in}
           ).without_content(
-            %r{neighbor 192.0.2.2 prefix-list deny-default-route in},
+            %r{neighbor 192.0.2.2 prefix-list deny-default-route in}
           ).without_content(
-            %r{neighbor 192.0.2.2 route-map outbound-64498 out},
+            %r{neighbor 192.0.2.2 route-map outbound-64498 out}
           )
         end
+
         it { is_expected.not_to contain_concat__fragment('bgpd_v6peer_64498') }
+
         it do
           is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64498').with(
             order: '90',
-            target: '/etc/quagga/bgpd.conf',
+            target: '/etc/quagga/bgpd.conf'
           ).without_content(
-            %r{route-map outbound-64498},
+            %r{route-map outbound-64498}
           ).without_content(
-            %r{route-map outbound-64498-v6},
+            %r{route-map outbound-64498-v6}
           ).without_content(
-            %r{set community},
+            %r{set community}
           )
         end
       end
