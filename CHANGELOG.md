@@ -1,3 +1,6 @@
+## 2025-02-17 0.7.1
+* fix up peer template
+
 ## 2025-02-17 0.7.0
 * drop service parameter
 * Drop nagios support
