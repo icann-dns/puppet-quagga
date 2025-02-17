@@ -1,3 +1,9 @@
+## 2025-02-17 0.7.0
+* drop service parameter
+* Drop nagios support
+* Fix up lint
+* disable beaker tests
+
 ## 2021-05-07 0.5.9
 * Update type to use a newer version of puppetlabs-stdlib
 
