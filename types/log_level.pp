@@ -1,3 +1,4 @@
+# @summary Quagga log level
 type Quagga::Log_level = Enum[
   'alerts',
   'critical',

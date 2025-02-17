@@ -3,14 +3,13 @@
 require 'beaker-rspec'
 require 'beaker/testmode_switcher/dsl'
 require 'beaker-pe'
-require 'progressbar'
 
-modules = [
-  'puppetlabs-stdlib',
-  'puppetlabs-concat',
-  'puppetlabs-inifile',
-  'puppet-logrotate',
-  'icann-tea',
+modules = %w[
+  puppetlabs-stdlib
+  puppetlabs-concat
+  puppetlabs-inifile
+  puppet-logrotate
+  puppet-systemd
 ]
 git_repos = []
 def install_modules(host, modules, git_repos)
@@ -20,7 +19,7 @@ def install_modules(host, modules, git_repos)
     on(host, puppet('module', 'install', m))
   end
   git_repos.each do |g|
-    step "Installing puppet module \'#{g[:repo]}\' from git on #{host} to #{default['distmoduledir']}"
+    step "Installing puppet module '#{g[:repo]}' from git on #{host} to #{default['distmoduledir']}"
     on(host, "git clone -b #{g[:branch]} --single-branch #{g[:repo]} #{default['distmoduledir']}/#{g[:mod]}")
   end
 end
@@ -64,7 +63,7 @@ else
       host,
       version: '4',
       puppet_agent_version: '1.6.1',
-      default_action: 'gem_install',
+      default_action: 'gem_install'
     )
     install_modules(host, modules, git_repos)
   end

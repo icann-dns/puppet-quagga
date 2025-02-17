@@ -2,8 +2,6 @@
 # @param my_asn The local ASN number
 # @param router_id The router_id
 # @param enable if to enable bgpd
-# @param service The name of the service to notify
-# @param stage_config If we should first stage config
 # @param networks4 List of v4 networks to advertise
 # @param failsafe_networks4 List of v4 failsafe networks to advertise
 # @param networks6 List of v6 networks to advertise
@@ -16,7 +14,6 @@
 # @param enable_advertisements weather we should advertise bgp networks
 # @param enable_advertisements_v4 weather we should advertise bgp v4networks
 # @param enable_advertisements_v6 weather we should advertise bgp v6networks
-# @param manage_nagios configure nagios monitoring
 # @param conf_file location of bgp config file
 # @param bgpd_cmd location of bgp config comand
 # @param debug_bgp Debug options
@@ -41,8 +38,6 @@ class quagga::bgpd (
   Integer[1,4294967295]                $my_asn                   = undef,
   Stdlib::IP::Address::V4              $router_id                = undef,
   Boolean                              $enable                   = true,
-  Boolean                              $service                  = false,
-  Boolean                              $stage_config             = false,
   Array[Stdlib::IP::Address::V4::CIDR] $networks4                = [],
   Array[Stdlib::IP::Address::V4::CIDR] $failsafe_networks4       = [],
   Array[Stdlib::IP::Address::V6::CIDR] $networks6                = [],
@@ -55,9 +50,8 @@ class quagga::bgpd (
   Boolean                              $enable_advertisements    = true,
   Boolean                              $enable_advertisements_v4 = true,
   Boolean                              $enable_advertisements_v6 = true,
-  Boolean                              $manage_nagios            = false,
   Stdlib::Absolutepath                 $conf_file                = '/etc/quagga/bgpd.conf',
-  Stdlib::Absolutepath                 $bgpd_cmd                 = '/usr/lib/quagga/bgpd',
+  Stdlib::Absolutepath                 $bgpd_cmd                 = '/usr/sbin/bgpd',
   Array                                $debug_bgp                = [],
   Boolean                              $log_stdout               = false,
   Quagga::Log_level                    $log_stdout_level         = 'debugging',
@@ -79,15 +73,13 @@ class quagga::bgpd (
 ) {
   include quagga
 
-  Ini_setting {
+  ini_setting { 'bgpd':
+    setting => 'bgpd',
+    value   => $enable.bool2str('yes','no'),
     path    => '/etc/quagga/daemons',
     section => '',
     notify  => Service[$quagga::service],
     require => Package[$quagga::package],
-  }
-  ini_setting { 'bgpd':
-    setting => 'bgpd',
-    value   => $enable.bool2str('yes','no'),
   }
   # the quagga validate command runs without CAP_DAC_OVERRIDE
   # this means that even if running the command as root it cant
@@ -102,33 +94,19 @@ class quagga::bgpd (
     user    => $quagga::owner,
     before  => Concat[$conf_file],
   }
-  if $service {
-    $_service = 'bgpd'
-    service { $_service:
-      ensure  => running,
-      enable  => true,
-      require => Concat[$conf_file],
-    }
-  } else {
-    $_service = $quagga::service
+  service { 'bgpd':
+    ensure  => running,
+    enable  => true,
+    require => Concat[$conf_file],
   }
-  if $stage_config {
-    concat { $conf_file:
-      require      => Package[$quagga::package],
-      owner        => $quagga::owner,
-      group        => $quagga::group,
-      mode         => $quagga::mode,
-      validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
-    }
-  } else {
-    concat { $conf_file:
-      require      => Package[$quagga::package],
-      notify       => Service[$_service],
-      owner        => $quagga::owner,
-      group        => $quagga::group,
-      mode         => $quagga::mode,
-      validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
-    }
+
+  concat { $conf_file:
+    require      => Package[$quagga::package],
+    owner        => $quagga::owner,
+    group        => $quagga::group,
+    mode         => $quagga::mode,
+    validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
+    notify       => Service['bgpd'],
   }
   concat::fragment { 'quagga_bgpd_head':
     target  => $conf_file,

@@ -1,4 +1,4 @@
-# module name 
+# module name
 
 ## Module development setup
 
@@ -21,7 +21,7 @@ bundle exec rake spec
 
 ### Integration Testing
 This type of testing is somewhat manual and requires the use of vagrant and a test vm that is controlled by vagrant.
-You can find the list of available test vms by running `vagrant status` in the root of the module directory.  There is 
+You can find the list of available test vms by running `vagrant status` in the root of the module directory.  There is
 at lot of magic happening in the vagrantfile that makes this easy.  Windows support with this module has not been added yet.
 
 ```shell
@@ -35,7 +35,7 @@ centos6                   running (vmware_fusion)
 ```
 
 To run a test first you need to define the test code located in module_root/tests directory.  This code is nothing more
-than a bunch of puppet code that uses your manifest code.  You will be using puppet apply to run this code on the vm. 
+than a bunch of puppet code that uses your manifest code.  You will be using puppet apply to run this code on the vm.
 Have a look inside the tests directory for examples.
 
 Example test file
@@ -60,7 +60,7 @@ or use the rake command which bundles the two commands together
 bundle exec rake "vagrant_up[linux.pp,centos6]"
 ```
 
-### Acceptance Tests 
+### Acceptance Tests
 Acceptance testing is sorta like combining unit testing and integration testing where it tests the code on real systems
 automatically across a wide range of operating systems.  This is an advanced topic, so you will want to master unit and
 integration testing first before writing acceptance tests.

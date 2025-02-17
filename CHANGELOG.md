@@ -74,5 +74,4 @@
 * add BGP MD5 passport support
 
 ## 2015-03-27 v0.1.2
-* Initial Release 
-
+* Initial Release

@@ -63,61 +63,78 @@ describe 'quagga class failsafe networks router' do
       apply_manifest(pp1, catch_failures: true)
       apply_manifest_on(router2, pp2, catch_failures: true)
     end
+
     it 'r1 clean puppet run' do
       expect(apply_manifest(pp1, catch_failures: true).exit_code).to eq 0
     end
+
     it 'r2 clean puppet run' do
       expect(apply_manifest_on(router2, pp2, catch_failures: true).exit_code).to eq 0
       sleep(10)
     end
+
     describe service('quagga') do
       it { is_expected.to be_running }
     end
+
     describe process('bgpd') do
       its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
+
     describe port(179) do
       it { is_expected.to be_listening }
     end
+
     describe command("ping -c 1 #{router2_ip}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command("ping6 -I eth0 -c 1 #{router2_ip6}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command('vtysh -c \'show ip bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router2_ip}\s+4\s+#{router2_asn}}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip} received-routes\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip} received-routes'") do
       its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}\s#{router2_asn}\s#{router2_asn}\s#{router2_asn}\si}) }
       its(:stdout) { is_expected.to match(%r{#{ipv4_failsafe_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}\si}) }
     end
+
     describe command('vtysh -c \'show ip bgp community no-export\'') do
       its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}}) }
       its(:stdout) { is_expected.not_to match(%r{#{ipv4_failsafe_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}}) }
     end
+
     describe command('vtysh -c \'show ip bgp community 999:100\'') do
       its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}}) }
       its(:stdout) { is_expected.not_to match(%r{#{ipv4_failsafe_network}\s+#{router2_ip}\s+\d+\s+\d+\s+#{router2_asn}}) }
     end
+
     describe command('vtysh -c \'show ipv6 bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router2_ip6}\s+4\s+#{router2_asn}}i) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip6}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip6}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ipv6 bgp neighbors #{router2_ip6} received-routes\'") do
+
+    describe command("vtysh -c 'show ipv6 bgp neighbors #{router2_ip6} received-routes'") do
       its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}\s#{router2_asn}\s#{router2_asn}\s#{router2_asn}\si}) }
       its(:stdout) { is_expected.to match(%r{#{ipv6_failsafe_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}\si}) }
     end
+
     describe command('vtysh -c \'show ipv6 bgp community no-export\'') do
       its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}}) }
       its(:stdout) { is_expected.not_to match(%r{#{ipv6_failsafe_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}}) }
     end
+
     describe command('vtysh -c \'show ipv6 bgp community 999:100\'') do
       its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}}) }
       its(:stdout) { is_expected.not_to match(%r{#{ipv6_failsafe_network}\s+#{router2_ip6}\s+\d+\s+\d+\s+#{router2_asn}}) }

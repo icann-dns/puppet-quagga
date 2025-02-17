@@ -60,49 +60,63 @@ describe 'quagga class prepend router' do
       apply_manifest(pp1, catch_failures: true)
       apply_manifest_on(router2, pp2, catch_failures: true)
     end
+
     it 'clean puppet run' do
       expect(apply_manifest(pp1, catch_failures: true).exit_code).to eq 0
     end
+
     it 'r2 clean puppet run' do
       expect(apply_manifest_on(router2, pp2, catch_failures: true).exit_code).to eq 0
       # allow peers to configure and establish
       sleep(10)
     end
+
     describe command('cat /etc/quagga/bgpd.conf 2>&1') do
       its(:stdout) { is_expected.to match(%r{}) }
     end
+
     describe service('quagga') do
       it { is_expected.to be_running }
     end
+
     describe process('bgpd') do
       its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
+
     describe port(179) do
       it { is_expected.to be_listening }
     end
+
     describe command("ping -c 1 #{router2_ip}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command("ping6 -I eth0 -c 1 #{router2_ip6}") do
       its(:exit_status) { is_expected.to eq 0 }
     end
+
     describe command('vtysh -c \'show ip bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router2_ip}\s+4\s+#{router2_asn}}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip} advertised-routes\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip} advertised-routes'") do
       its(:stdout) { is_expected.to match(%r{#{ipv4_network}\s+#{router1_ip}\s+0\s+32768\s+#{router1_asn}\s#{router1_asn}\s#{router1_asn}\si}) }
     end
+
     describe command('vtysh -c \'show ipv6 bgp sum\'') do
       its(:stdout) { is_expected.to match(%r{#{router2_ip6}\s+4\s+#{router2_asn}}i) }
     end
-    describe command("vtysh -c \'show ip bgp neighbors #{router2_ip6}\'") do
+
+    describe command("vtysh -c 'show ip bgp neighbors #{router2_ip6}'") do
       its(:stdout) { is_expected.to match(%r{BGP state = Established}) }
     end
-    describe command("vtysh -c \'show ipv6 bgp neighbors #{router2_ip6} advertised-routes\'") do
+
+    describe command("vtysh -c 'show ipv6 bgp neighbors #{router2_ip6} advertised-routes'") do
       its(:stdout) { is_expected.to match(%r{#{ipv6_network}\s+#{router1_ip6}\s+0\s+32768\s+#{router1_asn}\s#{router1_asn}\s#{router1_asn}\si}) }
     end
   end
