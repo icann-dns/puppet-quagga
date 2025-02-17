@@ -1,1 +1,9 @@
 ---
+.rubocop.yml:
+  extra:
+    RSpec/MultipleMemoizedHelpers:
+      Enabled: false
+    RSpec/RepeatedExampleGroupDescription:
+      Enabled: false
+    RSpec/RepeatedExampleGroupBody:
+      Enabled: false
