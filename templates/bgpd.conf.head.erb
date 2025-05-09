@@ -1,7 +1,7 @@
 !
 ! This file is managed by Puppet. DO NOT EDIT.
 !
-hostname <%= @fqdn %>
+hostname <%= @facts['networking']['fqdn'] %>
 !
 <%- if @log_stdout -%>
 log stdout <%= @log_stdout_level %>
