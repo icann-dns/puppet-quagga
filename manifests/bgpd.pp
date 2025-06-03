@@ -11,16 +11,30 @@
 # @param reject_bogons_v4 list of v4 bogons to reject
 # @param reject_bogons_v6 list of v6 bogons to reject
 # @param failover_server If this is a failover server
-# @param inject_static_routes frr needs routes to exist in the routing table to redistribute.  if they don't we need to add some Null0 routes
 # @param enable_advertisements weather we should advertise bgp networks
 # @param enable_advertisements_v4 weather we should advertise bgp v4networks
 # @param enable_advertisements_v6 weather we should advertise bgp v6networks
+# @param conf_file location of bgp config file
 # @param bgpd_cmd location of bgp config comand
 # @param debug_bgp Debug options
-
+# @param log_stdout Log to stdout
+# @param log_stdout_level Logging level
+# @param log_file Log to file
+# @param log_file_path The log file to use
+# @param log_file_level The log level to use
+# @param logrotate_enable Enable logrotate
+# @param logrotate_rotate how many rotated files to keep
+# @param logrotate_size rotation size
+# @param log_syslog log to syslog
+# @param log_syslog_level syslog level
+# @param log_syslog_facility syslog facility
+# @param log_monitor log to monitor
+# @param log_monitor_level log to level
+# @param log_record_priority
+# @param log_timestamp_precision logging precission
 # @param fib_update update the local fib
 # @param peers A hash of peers
-class frr::bgpd (
+class quagga::bgpd (
   Integer[1,4294967295]                $my_asn                   = undef,
   Stdlib::IP::Address::V4              $router_id                = undef,
   Boolean                              $enable                   = true,
@@ -33,70 +47,100 @@ class frr::bgpd (
   Boolean                              $reject_bogons_v4         = true,
   Boolean                              $reject_bogons_v6         = true,
   Boolean                              $failover_server          = false,
-  Boolean                              $inject_static_routes     = true,
   Boolean                              $enable_advertisements    = true,
   Boolean                              $enable_advertisements_v4 = true,
   Boolean                              $enable_advertisements_v6 = true,
-  Stdlib::Absolutepath                 $bgpd_cmd                 = '/usr/lib/frr/bgpd',
+  Stdlib::Absolutepath                 $conf_file                = '/etc/quagga/bgpd.conf',
+  Stdlib::Absolutepath                 $bgpd_cmd                 = '/usr/sbin/bgpd',
   Array                                $debug_bgp                = [],
+  Boolean                              $log_stdout               = false,
+  Quagga::Log_level                    $log_stdout_level         = 'debugging',
+  Boolean                              $log_file                 = false,
+  Stdlib::Absolutepath                 $log_file_path            = '/var/log/quagga/bgpd.log',
+  Quagga::Log_level                    $log_file_level           = 'debugging',
+  Boolean                              $logrotate_enable         = false,
+  Integer[1,100]                       $logrotate_rotate         = 5,
+  String                               $logrotate_size           = '100M',
+  Boolean                              $log_syslog               = false,
+  Quagga::Log_level                    $log_syslog_level         = 'debugging',
+  Stdlib::Syslogfacility               $log_syslog_facility      = 'daemon',
+  Boolean                              $log_monitor              = false,
+  Quagga::Log_level                    $log_monitor_level        = 'debugging',
+  Boolean                              $log_record_priority      = false,
+  Integer[0,6]                         $log_timestamp_precision  = 1,
   Boolean                              $fib_update               = true,
   Hash                                 $peers                    = {},
 ) {
-  include frr
-  $conf_file = $frr::conf_file
+  include quagga
 
-  ini_setting {
-    default:
-      path    => '/etc/frr/daemons',
-      section => '',
-      notify  => Service[$frr::service],
-      require => Package[$frr::package];
-    'bgpd':
-      setting => 'bgpd',
-      value   => $enable.bool2str('yes','no');
+  ini_setting { 'bgpd':
+    setting => 'bgpd',
+    value   => $enable.bool2str('yes','no'),
+    path    => '/etc/quagga/daemons',
+    section => '',
+    notify  => Service[$quagga::service],
+    require => Package[$quagga::package],
   }
-  if $inject_static_routes {
-    $static_null_routes = (
-      ($networks4 + $failsafe_networks4).map |$net| {
-        "ip route ${net} Null0"
-      } + ($networks6 + $failsafe_networks6).map |$net| {
-        "ipv6 route ${net} Null0"
-      }
-    ).unique.join("\n")
-    concat::fragment { 'frr_bgpd_static_routes':
-      target  => $conf_file,
-      order   => '10',
-      content => $static_null_routes,
-    }
+  # the quagga validate command runs without CAP_DAC_OVERRIDE
+  # this means that even if running the command as root it cant
+  # read files owned by !root
+  # further to this the validate command is indeterminate. if the
+  # file allready exists then the temp file created for the validate_cmd
+  # has the permissions of the original user.  if the file does not exits
+  # then the temp file is created with root user permissions.
+  # As such we need this hack
+  exec { "/usr/bin/touch ${conf_file}":
+    creates => $conf_file,
+    user    => $quagga::owner,
+    before  => Concat[$conf_file],
   }
-  concat::fragment { 'frr_bgpd_head':
+  service { 'bgpd':
+    ensure  => running,
+    enable  => true,
+    require => Concat[$conf_file],
+  }
+
+  concat { $conf_file:
+    require      => Package[$quagga::package],
+    owner        => $quagga::owner,
+    group        => $quagga::group,
+    mode         => $quagga::mode,
+    validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
+    notify       => Service['bgpd'],
+  }
+  concat::fragment { 'quagga_bgpd_head':
     target  => $conf_file,
-    content => template('frr/bgpd.conf.head.erb'),
-    order   => '20',
+    content => template('quagga/bgpd.conf.head.erb'),
+    order   => '01',
   }
-  concat::fragment { 'frr_bgpd_v6head':
+  concat::fragment { 'quagga_bgpd_v6head':
     target  => $conf_file,
     content => "!\n address-family ipv6\n",
-    order   => '40',
+    order   => '30',
   }
-  concat::fragment { 'frr_bgpd_v6foot':
+  concat::fragment { 'quagga_bgpd_v6foot':
     target  => $conf_file,
-    content => template('frr/bgpd.conf.v6foot.erb'),
-    order   => '60',
+    content => template('quagga/bgpd.conf.v6foot.erb'),
+    order   => '50',
   }
-  concat::fragment { 'frr_bgpd_acl':
+  concat::fragment { 'quagga_bgpd_acl':
     target  => $conf_file,
-    content => template('frr/bgpd.conf.acl.erb'),
+    content => template('quagga/bgpd.conf.acl.erb'),
     order   => '80',
   }
-  concat::fragment { 'frr_bgpd_foot':
+  concat::fragment { 'quagga_bgpd_foot':
     target  => $conf_file,
     content => "line vty\n!\n",
     order   => '99',
   }
-  $peers.each |$peer_title, $peer_config| {
-    frr::bgpd::peer { String($peer_title):
-      * => $peer_config,
+  if $log_file and $logrotate_enable {
+    logrotate::rule { 'quagga_bgp':
+      path       => $log_file_path,
+      rotate     => $logrotate_rotate,
+      size       => $logrotate_size,
+      compress   => true,
+      postrotate => '/bin/kill -USR1 `cat /var/run/quagga/bgpd.pid 2> /dev/null` 2> /dev/null || true',
     }
   }
+  create_resources(quagga::bgpd::peer, $peers)
 }

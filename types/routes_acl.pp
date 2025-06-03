@@ -1,5 +1,5 @@
-# @summary Frr routes acl
-type Frr::Routes_acl = Enum[
+# @summary Quagga routes acl
+type Quagga::Routes_acl = Enum[
   'all',
   'none',
   'default',

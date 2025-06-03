@@ -1,6 +1,6 @@
 fixtures:
     symlinks:
-      frr: "#{source_dir}"
+      quagga: "#{source_dir}"
     repositories:
       stdlib: https://github.com/puppetlabs/puppetlabs-stdlib.git
       concat: https://github.com/puppetlabs/puppetlabs-concat

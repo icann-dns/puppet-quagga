@@ -8,9 +8,9 @@
 # @param password The password to use.
 # @param prepend The prepend value.
 # @param default_originate Whether to default originate.
-define frr::bgpd::peer (
+define quagga::bgpd::peer (
   Boolean                        $default_originate = false,
-  Frr::Routes_acl             $inbound_routes    = 'none',
+  Quagga::Routes_acl             $inbound_routes    = 'none',
   String                         $desc              = undef,
   Array                          $communities       = [],
   Array[Stdlib::IP::Address::V4] $addr4             = [],
@@ -19,27 +19,27 @@ define frr::bgpd::peer (
   Optional[String]               $password          = undef,
   Optional[Integer[1,32]]        $prepend           = undef,
 ) {
-  include frr::bgpd
+  include quagga::bgpd
 
-  $my_asn = $frr::bgpd::my_asn
+  $my_asn = $quagga::bgpd::my_asn
 
   unless ($addr4 + $addr6).empty {
     concat::fragment { "bgpd_peer_${name}":
-      target  => $frr::bgpd::conf_file,
-      content => template('frr/bgpd.conf.peer.erb'),
-      order   => '30',
+      target  => $quagga::bgpd::conf_file,
+      content => template('quagga/bgpd.conf.peer.erb'),
+      order   => '10',
     }
   }
   unless $addr6.empty {
     concat::fragment { "bgpd_v6peer_${name}":
-      target  => $frr::bgpd::conf_file,
-      content => template('frr/bgpd.conf.v6peer.erb'),
-      order   => '50',
+      target  => $quagga::bgpd::conf_file,
+      content => template('quagga/bgpd.conf.v6peer.erb'),
+      order   => '40',
     }
   }
-  concat::fragment { "frr_bgpd_routemap_${name}":
-    target  => $frr::bgpd::conf_file,
-    content => template('frr/bgpd.conf.routemap.erb'),
+  concat::fragment { "quagga_bgpd_routemap_${name}":
+    target  => $quagga::bgpd::conf_file,
+    content => template('quagga/bgpd.conf.routemap.erb'),
     order   => '90',
   }
 }

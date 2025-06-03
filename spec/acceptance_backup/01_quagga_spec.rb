@@ -2,9 +2,9 @@
 
 require 'spec_helper_acceptance'
 
-describe 'frr class' do
+describe 'quagga class' do
   context 'defaults' do
-    pp = 'class {\'::frr\': }'
+    pp = 'class {\'::quagga\': }'
     it 'work with no errors' do
       apply_manifest(pp, catch_failures: true)
     end
@@ -13,15 +13,15 @@ describe 'frr class' do
       expect(apply_manifest(pp, catch_failures: true).exit_code).to eq 0
     end
 
-    describe service('frr') do
+    describe service('quagga') do
       it { is_expected.to be_running }
     end
   end
 
   context 'basic IPv4 peer' do
     pp = <<-EOF
-    class { '::frr': }
-    class { '::frr::bgpd':
+    class { '::quagga': }
+    class { '::quagga::bgpd':
       my_asn => 64496,
       router_id => '192.0.2.1',
       networks4 => [ '192.0.2.0/24'],
@@ -43,12 +43,12 @@ describe 'frr class' do
       expect(apply_manifest(pp, catch_failures: true).exit_code).to eq 0
     end
 
-    describe service('frr') do
+    describe service('quagga') do
       it { is_expected.to be_running }
     end
 
     describe process('bgpd') do
-      its(:user) { is_expected.to eq 'frr' }
+      its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
 
@@ -67,8 +67,8 @@ describe 'frr class' do
 
   context 'basic IPv6 peer' do
     pp = <<-EOF
-    class { '::frr': }
-    class { '::frr::bgpd':
+    class { '::quagga': }
+    class { '::quagga::bgpd':
       my_asn => 64496,
       router_id => '192.0.2.1',
       networks6 => [ '2001:DB8::/48'],
@@ -90,12 +90,12 @@ describe 'frr class' do
       expect(apply_manifest(pp, catch_failures: true).exit_code).to eq 0
     end
 
-    describe service('frr') do
+    describe service('quagga') do
       it { is_expected.to be_running }
     end
 
     describe process('bgpd') do
-      its(:user) { is_expected.to eq 'frr' }
+      its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
 
@@ -114,8 +114,8 @@ describe 'frr class' do
 
   context 'basic IPv6 & IPv4 peers' do
     pp = <<-EOF
-    class { '::frr': }
-    class { '::frr::bgpd':
+    class { '::quagga': }
+    class { '::quagga::bgpd':
       my_asn => 64496,
       router_id => '192.0.2.1',
       networks4 => [ '192.0.2.0/24'],
@@ -139,12 +139,12 @@ describe 'frr class' do
       expect(apply_manifest(pp, catch_failures: true).exit_code).to eq 0
     end
 
-    describe service('frr') do
+    describe service('quagga') do
       it { is_expected.to be_running }
     end
 
     describe process('bgpd') do
-      its(:user) { is_expected.to eq 'frr' }
+      its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
 

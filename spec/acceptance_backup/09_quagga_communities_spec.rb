@@ -2,7 +2,7 @@
 
 require 'spec_helper_acceptance'
 
-describe 'frr class communities router' do
+describe 'quagga class communities router' do
   router1 = find_host_with_role(:router1)
   router2 = find_host_with_role(:router2)
   router1_ip = fact_on(router1, 'ipaddress')
@@ -21,8 +21,8 @@ describe 'frr class communities router' do
   on(router2, "ip -6 addr add #{router2_ip6}/64 dev eth0", acceptable_exit_codes: [0, 2])
   context 'basic' do
     pp1 = <<-EOF
-    class { '::frr': }
-    class { '::frr::bgpd':
+    class { '::quagga': }
+    class { '::quagga::bgpd':
       my_asn => #{router1_asn},
       router_id => '#{router1_ip}',
       reject_bogons_v4 => false,
@@ -38,8 +38,8 @@ describe 'frr class communities router' do
     }
     EOF
     pp2 = <<-EOF
-    class { '::frr': }
-    class { '::frr::bgpd':
+    class { '::quagga': }
+    class { '::quagga::bgpd':
       my_asn => #{router2_asn},
       router_id => '#{router2_ip}',
       networks4 => [ '#{ipv4_network}', '#{additional_v4_network}'],
@@ -71,16 +71,16 @@ describe 'frr class communities router' do
       sleep(10)
     end
 
-    describe command('cat /etc/frr/bgpd.conf 2>&1') do
+    describe command('cat /etc/quagga/bgpd.conf 2>&1') do
       its(:stdout) { is_expected.to match(%r{}) }
     end
 
-    describe service('frr') do
+    describe service('quagga') do
       it { is_expected.to be_running }
     end
 
     describe process('bgpd') do
-      its(:user) { is_expected.to eq 'frr' }
+      its(:user) { is_expected.to eq 'quagga' }
       it { is_expected.to be_running }
     end
 
