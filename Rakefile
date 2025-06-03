@@ -27,7 +27,7 @@ rescue LoadError
   # voxpupuli-release not present
 else
   GCGConfig.user = 'icann-dns'
-  GCGConfig.project = 'puppet-quagga'
+  GCGConfig.project = 'puppet-frr'
 end
 
 desc "Run main 'test' task and report merged results to coveralls"

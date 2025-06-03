@@ -1,12 +1,12 @@
 {
-  "name": "icann-quagga",
+  "name": "icann-frr",
   "version": "0.8.0",
   "author": "john.bond@icann.org",
-  "summary": "puppet module to manage Quagga",
+  "summary": "puppet module to manage Frr",
   "license": "Apache-2.0",
-  "source": "https://github.com/icann-dns/puppet-quagga",
-  "project_page": "https://github.com/icann-dns/puppet-quagga",
-  "issues_url": "https://github.com/icann-dns/puppet-quagga/issues",
+  "source": "https://github.com/icann-dns/puppet-frr",
+  "project_page": "https://github.com/icann-dns/puppet-frr",
+  "issues_url": "https://github.com/icann-dns/puppet-frr/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
