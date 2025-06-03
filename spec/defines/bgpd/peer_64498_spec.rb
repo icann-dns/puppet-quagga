@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'quagga::bgpd::peer' do
+describe 'frr::bgpd::peer' do
   let(:node) { 'foo.example.com' }
   let(:title) { '64498' }
   let(:params) do
@@ -18,7 +18,7 @@ describe 'quagga::bgpd::peer' do
     }
   end
   let(:pre_condition) do
-    "class {'::quagga::bgpd': my_asn => 64496, router_id => '192.0.2.1', networks4 => ['192.0.2.0/24'] }"
+    "class {'::frr::bgpd': my_asn => 64496, router_id => '192.0.2.1', networks4 => ['192.0.2.0/24'] }"
   end
 
   on_supported_os.each do |os, facts|
@@ -30,12 +30,12 @@ describe 'quagga::bgpd::peer' do
         # Puppet::Util::Log.level = :debug
         # Puppet::Util::Log.newdestination(:console)
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_class('Quagga::Bgpd') }
+        it { is_expected.to contain_class('Frr::Bgpd') }
 
         it do
           is_expected.to contain_concat__fragment('bgpd_peer_64498').with(
             order: '10',
-            target: '/etc/quagga/bgpd.conf'
+            target: '/etc/frr/bgpd.conf'
           ).with_content(
             %r{neighbor 192.0.2.2 remote-as 64498}
           ).with_content(
@@ -56,9 +56,9 @@ describe 'quagga::bgpd::peer' do
         it { is_expected.not_to contain_concat__fragment('bgpd_v6peer_64498') }
 
         it do
-          is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64498').with(
+          is_expected.to contain_concat__fragment('frr_bgpd_routemap_64498').with(
             order: '90',
-            target: '/etc/quagga/bgpd.conf'
+            target: '/etc/frr/bgpd.conf'
           ).without_content(
             %r{route-map outbound-64498}
           ).without_content(

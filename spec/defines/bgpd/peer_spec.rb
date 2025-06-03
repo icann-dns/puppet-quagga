@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'quagga::bgpd::peer' do
+describe 'frr::bgpd::peer' do
   let(:node) { 'foo.example.com' }
   let(:title) { '64497' }
   # below is a list of the resource parameters that you can override.
@@ -21,7 +21,7 @@ describe 'quagga::bgpd::peer' do
     }
   end
   let(:pre_condition) do
-    "class {'::quagga::bgpd': my_asn => 64496, router_id => '192.0.2.1', networks4 => ['192.0.2.0/24'] }"
+    "class {'::frr::bgpd': my_asn => 64496, router_id => '192.0.2.1', networks4 => ['192.0.2.0/24'] }"
   end
 
   on_supported_os.each do |os, facts|
@@ -33,12 +33,12 @@ describe 'quagga::bgpd::peer' do
         # Puppet::Util::Log.level = :debug
         # Puppet::Util::Log.newdestination(:console)
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_class('Quagga::Bgpd') }
+        it { is_expected.to contain_class('Frr::Bgpd') }
 
         it do
           is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
             order: '10',
-            target: '/etc/quagga/bgpd.conf'
+            target: '/etc/frr/bgpd.conf'
           ).with_content(
             %r{neighbor 192.0.2.2 remote-as 64497}
           ).with_content(
@@ -60,14 +60,14 @@ describe 'quagga::bgpd::peer' do
           is_expected.not_to contain_concat__fragment('bgpd_v6peer_64497').with(
             content: '',
             order: '40',
-            target: '/etc/quagga/bgpd.conf'
+            target: '/etc/frr/bgpd.conf'
           )
         end
 
         it do
-          is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+          is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
             order: '90',
-            target: '/etc/quagga/bgpd.conf'
+            target: '/etc/frr/bgpd.conf'
           ).without_content(
             %r{route-map outbound-64497}
           ).without_content(
@@ -87,7 +87,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 remote-as 64497}
             ).with_content(
@@ -120,7 +120,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 activate}
             ).with_content(
@@ -143,7 +143,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 activate}
             ).with_content(
@@ -172,7 +172,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).without_content(
               %r{neighbor 192.0.2.2 prefix-list deny in}
             ).without_content(
@@ -191,7 +191,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).without_content(
               %r{neighbor 192.0.2.2 prefix-list deny-default-route in}
             ).without_content(
@@ -210,7 +210,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).without_content(
               %r{neighbor 192.0.2.2 prefix-list deny-default-route in}
             ).without_content(
@@ -229,7 +229,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 prefix-list deny in}
             ).without_content(
@@ -248,7 +248,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).without_content(
               %r{neighbor 2001:DB8::2 prefix-list deny in}
             ).with_content(
@@ -267,7 +267,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).without_content(
               %r{neighbor 2001:DB8::2 prefix-list deny in}
             ).with_content(
@@ -286,7 +286,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).without_content(
               %r{neighbor 2001:DB8::2 prefix-list deny in}
             ).without_content(
@@ -305,16 +305,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -335,16 +335,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -363,16 +363,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -393,16 +393,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -421,7 +421,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
@@ -430,16 +430,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 route-map outbound-64497-v6 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -460,7 +460,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
@@ -469,16 +469,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 route-map outbound-64497-v6 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -497,7 +497,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
@@ -506,16 +506,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 route-map outbound-64497-v6 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -536,7 +536,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
@@ -545,16 +545,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 route-map outbound-64497-v6 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -573,7 +573,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 ebgp-multihop 5}
             )
@@ -588,7 +588,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 ebgp-multihop 5}
             ).with_content(
@@ -605,7 +605,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 password password}
             )
@@ -620,7 +620,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 password password}
             ).with_content(
@@ -637,16 +637,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(
@@ -663,7 +663,7 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_peer_64497').with(
               order: '10',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 192.0.2.2 route-map outbound-64497 out}
             )
@@ -672,16 +672,16 @@ describe 'quagga::bgpd::peer' do
           it do
             is_expected.to contain_concat__fragment('bgpd_v6peer_64497').with(
               order: '40',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{neighbor 2001:DB8::2 route-map outbound-64497-v6 out}
             )
           end
 
           it do
-            is_expected.to contain_concat__fragment('quagga_bgpd_routemap_64497').with(
+            is_expected.to contain_concat__fragment('frr_bgpd_routemap_64497').with(
               order: '90',
-              target: '/etc/quagga/bgpd.conf'
+              target: '/etc/frr/bgpd.conf'
             ).with_content(
               %r{route-map outbound-64497 permit 10}
             ).with_content(

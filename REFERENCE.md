@@ -6,70 +6,70 @@
 
 ### Classes
 
-* [`quagga`](#quagga): Quagga routing server.
-* [`quagga::bgpd`](#quagga--bgpd): bgpd class
+* [`frr`](#frr): Frr routing server.
+* [`frr::bgpd`](#frr--bgpd): bgpd class
 
 ### Defined types
 
-* [`quagga::bgpd::peer`](#quagga--bgpd--peer): set up bgpd peer
+* [`frr::bgpd::peer`](#frr--bgpd--peer): set up bgpd peer
 
 ### Data types
 
-* [`Quagga::Log_level`](#Quagga--Log_level): Quagga log level
-* [`Quagga::Routes_acl`](#Quagga--Routes_acl): Quagga routes acl
+* [`Frr::Log_level`](#Frr--Log_level): Frr log level
+* [`Frr::Routes_acl`](#Frr--Routes_acl): Frr routes acl
 
 ## Classes
 
-### <a name="quagga"></a>`quagga`
+### <a name="frr"></a>`frr`
 
-Quagga routing server.
+Frr routing server.
 
 #### Parameters
 
-The following parameters are available in the `quagga` class:
+The following parameters are available in the `frr` class:
 
-* [`owner`](#-quagga--owner)
-* [`group`](#-quagga--group)
-* [`mode`](#-quagga--mode)
-* [`package`](#-quagga--package)
-* [`service`](#-quagga--service)
-* [`enable`](#-quagga--enable)
-* [`content`](#-quagga--content)
-* [`bgp_listenon`](#-quagga--bgp_listenon)
+* [`owner`](#-frr--owner)
+* [`group`](#-frr--group)
+* [`mode`](#-frr--mode)
+* [`package`](#-frr--package)
+* [`service`](#-frr--service)
+* [`enable`](#-frr--enable)
+* [`content`](#-frr--content)
+* [`bgp_listenon`](#-frr--bgp_listenon)
 
-##### <a name="-quagga--owner"></a>`owner`
-
-Data type: `String`
-
-The owner of the quagga configuration files.
-
-Default value: `'quagga'`
-
-##### <a name="-quagga--group"></a>`group`
+##### <a name="-frr--owner"></a>`owner`
 
 Data type: `String`
 
-The group of the quagga configuration files.
+The owner of the frr configuration files.
 
-Default value: `'quagga'`
+Default value: `'frr'`
 
-##### <a name="-quagga--mode"></a>`mode`
+##### <a name="-frr--group"></a>`group`
+
+Data type: `String`
+
+The group of the frr configuration files.
+
+Default value: `'frr'`
+
+##### <a name="-frr--mode"></a>`mode`
 
 Data type: `Stdlib::Filemode`
 
-The mode of the quagga configuration files.
+The mode of the frr configuration files.
 
 Default value: `'0664'`
 
-##### <a name="-quagga--package"></a>`package`
+##### <a name="-frr--package"></a>`package`
 
 Data type: `String`
 
 The package to install.
 
-Default value: `'quagga'`
+Default value: `'frr'`
 
-##### <a name="-quagga--service"></a>`service`
+##### <a name="-frr--service"></a>`service`
 
 Data type: `String`
 
@@ -77,7 +77,7 @@ The service to manage.
 
 Default value: `'zebra'`
 
-##### <a name="-quagga--enable"></a>`enable`
+##### <a name="-frr--enable"></a>`enable`
 
 Data type: `Boolean`
 
@@ -85,7 +85,7 @@ Whether to enable the zebra daemon.
 
 Default value: `true`
 
-##### <a name="-quagga--content"></a>`content`
+##### <a name="-frr--content"></a>`content`
 
 Data type: `String`
 
@@ -93,7 +93,7 @@ The content of the zebra configuration file.
 
 Default value: `"hostname ${facts['networking']['fqdn']}"`
 
-##### <a name="-quagga--bgp_listenon"></a>`bgp_listenon`
+##### <a name="-frr--bgp_listenon"></a>`bgp_listenon`
 
 Data type: `Optional[Stdlib::IP::Address]`
 
@@ -101,51 +101,51 @@ The IP address to listen on for BGP.
 
 Default value: `undef`
 
-### <a name="quagga--bgpd"></a>`quagga::bgpd`
+### <a name="frr--bgpd"></a>`frr::bgpd`
 
 bgpd class
 
 #### Parameters
 
-The following parameters are available in the `quagga::bgpd` class:
+The following parameters are available in the `frr::bgpd` class:
 
-* [`my_asn`](#-quagga--bgpd--my_asn)
-* [`router_id`](#-quagga--bgpd--router_id)
-* [`enable`](#-quagga--bgpd--enable)
-* [`networks4`](#-quagga--bgpd--networks4)
-* [`failsafe_networks4`](#-quagga--bgpd--failsafe_networks4)
-* [`networks6`](#-quagga--bgpd--networks6)
-* [`failsafe_networks6`](#-quagga--bgpd--failsafe_networks6)
-* [`rejected_v4`](#-quagga--bgpd--rejected_v4)
-* [`rejected_v6`](#-quagga--bgpd--rejected_v6)
-* [`reject_bogons_v4`](#-quagga--bgpd--reject_bogons_v4)
-* [`reject_bogons_v6`](#-quagga--bgpd--reject_bogons_v6)
-* [`failover_server`](#-quagga--bgpd--failover_server)
-* [`enable_advertisements`](#-quagga--bgpd--enable_advertisements)
-* [`enable_advertisements_v4`](#-quagga--bgpd--enable_advertisements_v4)
-* [`enable_advertisements_v6`](#-quagga--bgpd--enable_advertisements_v6)
-* [`conf_file`](#-quagga--bgpd--conf_file)
-* [`bgpd_cmd`](#-quagga--bgpd--bgpd_cmd)
-* [`debug_bgp`](#-quagga--bgpd--debug_bgp)
-* [`log_stdout`](#-quagga--bgpd--log_stdout)
-* [`log_stdout_level`](#-quagga--bgpd--log_stdout_level)
-* [`log_file`](#-quagga--bgpd--log_file)
-* [`log_file_path`](#-quagga--bgpd--log_file_path)
-* [`log_file_level`](#-quagga--bgpd--log_file_level)
-* [`logrotate_enable`](#-quagga--bgpd--logrotate_enable)
-* [`logrotate_rotate`](#-quagga--bgpd--logrotate_rotate)
-* [`logrotate_size`](#-quagga--bgpd--logrotate_size)
-* [`log_syslog`](#-quagga--bgpd--log_syslog)
-* [`log_syslog_level`](#-quagga--bgpd--log_syslog_level)
-* [`log_syslog_facility`](#-quagga--bgpd--log_syslog_facility)
-* [`log_monitor`](#-quagga--bgpd--log_monitor)
-* [`log_monitor_level`](#-quagga--bgpd--log_monitor_level)
-* [`log_record_priority`](#-quagga--bgpd--log_record_priority)
-* [`log_timestamp_precision`](#-quagga--bgpd--log_timestamp_precision)
-* [`fib_update`](#-quagga--bgpd--fib_update)
-* [`peers`](#-quagga--bgpd--peers)
+* [`my_asn`](#-frr--bgpd--my_asn)
+* [`router_id`](#-frr--bgpd--router_id)
+* [`enable`](#-frr--bgpd--enable)
+* [`networks4`](#-frr--bgpd--networks4)
+* [`failsafe_networks4`](#-frr--bgpd--failsafe_networks4)
+* [`networks6`](#-frr--bgpd--networks6)
+* [`failsafe_networks6`](#-frr--bgpd--failsafe_networks6)
+* [`rejected_v4`](#-frr--bgpd--rejected_v4)
+* [`rejected_v6`](#-frr--bgpd--rejected_v6)
+* [`reject_bogons_v4`](#-frr--bgpd--reject_bogons_v4)
+* [`reject_bogons_v6`](#-frr--bgpd--reject_bogons_v6)
+* [`failover_server`](#-frr--bgpd--failover_server)
+* [`enable_advertisements`](#-frr--bgpd--enable_advertisements)
+* [`enable_advertisements_v4`](#-frr--bgpd--enable_advertisements_v4)
+* [`enable_advertisements_v6`](#-frr--bgpd--enable_advertisements_v6)
+* [`conf_file`](#-frr--bgpd--conf_file)
+* [`bgpd_cmd`](#-frr--bgpd--bgpd_cmd)
+* [`debug_bgp`](#-frr--bgpd--debug_bgp)
+* [`log_stdout`](#-frr--bgpd--log_stdout)
+* [`log_stdout_level`](#-frr--bgpd--log_stdout_level)
+* [`log_file`](#-frr--bgpd--log_file)
+* [`log_file_path`](#-frr--bgpd--log_file_path)
+* [`log_file_level`](#-frr--bgpd--log_file_level)
+* [`logrotate_enable`](#-frr--bgpd--logrotate_enable)
+* [`logrotate_rotate`](#-frr--bgpd--logrotate_rotate)
+* [`logrotate_size`](#-frr--bgpd--logrotate_size)
+* [`log_syslog`](#-frr--bgpd--log_syslog)
+* [`log_syslog_level`](#-frr--bgpd--log_syslog_level)
+* [`log_syslog_facility`](#-frr--bgpd--log_syslog_facility)
+* [`log_monitor`](#-frr--bgpd--log_monitor)
+* [`log_monitor_level`](#-frr--bgpd--log_monitor_level)
+* [`log_record_priority`](#-frr--bgpd--log_record_priority)
+* [`log_timestamp_precision`](#-frr--bgpd--log_timestamp_precision)
+* [`fib_update`](#-frr--bgpd--fib_update)
+* [`peers`](#-frr--bgpd--peers)
 
-##### <a name="-quagga--bgpd--my_asn"></a>`my_asn`
+##### <a name="-frr--bgpd--my_asn"></a>`my_asn`
 
 Data type: `Integer[1,4294967295]`
 
@@ -153,7 +153,7 @@ The local ASN number
 
 Default value: `undef`
 
-##### <a name="-quagga--bgpd--router_id"></a>`router_id`
+##### <a name="-frr--bgpd--router_id"></a>`router_id`
 
 Data type: `Stdlib::IP::Address::V4`
 
@@ -161,7 +161,7 @@ The router_id
 
 Default value: `undef`
 
-##### <a name="-quagga--bgpd--enable"></a>`enable`
+##### <a name="-frr--bgpd--enable"></a>`enable`
 
 Data type: `Boolean`
 
@@ -169,7 +169,7 @@ if to enable bgpd
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--networks4"></a>`networks4`
+##### <a name="-frr--bgpd--networks4"></a>`networks4`
 
 Data type: `Array[Stdlib::IP::Address::V4::CIDR]`
 
@@ -177,7 +177,7 @@ List of v4 networks to advertise
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--failsafe_networks4"></a>`failsafe_networks4`
+##### <a name="-frr--bgpd--failsafe_networks4"></a>`failsafe_networks4`
 
 Data type: `Array[Stdlib::IP::Address::V4::CIDR]`
 
@@ -185,7 +185,7 @@ List of v4 failsafe networks to advertise
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--networks6"></a>`networks6`
+##### <a name="-frr--bgpd--networks6"></a>`networks6`
 
 Data type: `Array[Stdlib::IP::Address::V6::CIDR]`
 
@@ -193,7 +193,7 @@ List of v6 networks to advertise
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--failsafe_networks6"></a>`failsafe_networks6`
+##### <a name="-frr--bgpd--failsafe_networks6"></a>`failsafe_networks6`
 
 Data type: `Array[Stdlib::IP::Address::V6::CIDR]`
 
@@ -201,7 +201,7 @@ List of v6 failsafe networks to advertise
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--rejected_v4"></a>`rejected_v4`
+##### <a name="-frr--bgpd--rejected_v4"></a>`rejected_v4`
 
 Data type: `Array[Stdlib::IP::Address::V4::CIDR]`
 
@@ -209,7 +209,7 @@ list of v4 networks to reject
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--rejected_v6"></a>`rejected_v6`
+##### <a name="-frr--bgpd--rejected_v6"></a>`rejected_v6`
 
 Data type: `Array[Stdlib::IP::Address::V6::CIDR]`
 
@@ -217,7 +217,7 @@ list of v6 networks to reject
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--reject_bogons_v4"></a>`reject_bogons_v4`
+##### <a name="-frr--bgpd--reject_bogons_v4"></a>`reject_bogons_v4`
 
 Data type: `Boolean`
 
@@ -225,7 +225,7 @@ list of v4 bogons to reject
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--reject_bogons_v6"></a>`reject_bogons_v6`
+##### <a name="-frr--bgpd--reject_bogons_v6"></a>`reject_bogons_v6`
 
 Data type: `Boolean`
 
@@ -233,7 +233,7 @@ list of v6 bogons to reject
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--failover_server"></a>`failover_server`
+##### <a name="-frr--bgpd--failover_server"></a>`failover_server`
 
 Data type: `Boolean`
 
@@ -241,7 +241,7 @@ If this is a failover server
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--enable_advertisements"></a>`enable_advertisements`
+##### <a name="-frr--bgpd--enable_advertisements"></a>`enable_advertisements`
 
 Data type: `Boolean`
 
@@ -249,7 +249,7 @@ weather we should advertise bgp networks
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--enable_advertisements_v4"></a>`enable_advertisements_v4`
+##### <a name="-frr--bgpd--enable_advertisements_v4"></a>`enable_advertisements_v4`
 
 Data type: `Boolean`
 
@@ -257,7 +257,7 @@ weather we should advertise bgp v4networks
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--enable_advertisements_v6"></a>`enable_advertisements_v6`
+##### <a name="-frr--bgpd--enable_advertisements_v6"></a>`enable_advertisements_v6`
 
 Data type: `Boolean`
 
@@ -265,15 +265,15 @@ weather we should advertise bgp v6networks
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--conf_file"></a>`conf_file`
+##### <a name="-frr--bgpd--conf_file"></a>`conf_file`
 
 Data type: `Stdlib::Absolutepath`
 
 location of bgp config file
 
-Default value: `'/etc/quagga/bgpd.conf'`
+Default value: `'/etc/frr/bgpd.conf'`
 
-##### <a name="-quagga--bgpd--bgpd_cmd"></a>`bgpd_cmd`
+##### <a name="-frr--bgpd--bgpd_cmd"></a>`bgpd_cmd`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -281,7 +281,7 @@ location of bgp config comand
 
 Default value: `'/usr/sbin/bgpd'`
 
-##### <a name="-quagga--bgpd--debug_bgp"></a>`debug_bgp`
+##### <a name="-frr--bgpd--debug_bgp"></a>`debug_bgp`
 
 Data type: `Array`
 
@@ -289,7 +289,7 @@ Debug options
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--log_stdout"></a>`log_stdout`
+##### <a name="-frr--bgpd--log_stdout"></a>`log_stdout`
 
 Data type: `Boolean`
 
@@ -297,15 +297,15 @@ Log to stdout
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--log_stdout_level"></a>`log_stdout_level`
+##### <a name="-frr--bgpd--log_stdout_level"></a>`log_stdout_level`
 
-Data type: `Quagga::Log_level`
+Data type: `Frr::Log_level`
 
 Logging level
 
 Default value: `'debugging'`
 
-##### <a name="-quagga--bgpd--log_file"></a>`log_file`
+##### <a name="-frr--bgpd--log_file"></a>`log_file`
 
 Data type: `Boolean`
 
@@ -313,23 +313,23 @@ Log to file
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--log_file_path"></a>`log_file_path`
+##### <a name="-frr--bgpd--log_file_path"></a>`log_file_path`
 
 Data type: `Stdlib::Absolutepath`
 
 The log file to use
 
-Default value: `'/var/log/quagga/bgpd.log'`
+Default value: `'/var/log/frr/bgpd.log'`
 
-##### <a name="-quagga--bgpd--log_file_level"></a>`log_file_level`
+##### <a name="-frr--bgpd--log_file_level"></a>`log_file_level`
 
-Data type: `Quagga::Log_level`
+Data type: `Frr::Log_level`
 
 The log level to use
 
 Default value: `'debugging'`
 
-##### <a name="-quagga--bgpd--logrotate_enable"></a>`logrotate_enable`
+##### <a name="-frr--bgpd--logrotate_enable"></a>`logrotate_enable`
 
 Data type: `Boolean`
 
@@ -337,7 +337,7 @@ Enable logrotate
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--logrotate_rotate"></a>`logrotate_rotate`
+##### <a name="-frr--bgpd--logrotate_rotate"></a>`logrotate_rotate`
 
 Data type: `Integer[1,100]`
 
@@ -345,7 +345,7 @@ how many rotated files to keep
 
 Default value: `5`
 
-##### <a name="-quagga--bgpd--logrotate_size"></a>`logrotate_size`
+##### <a name="-frr--bgpd--logrotate_size"></a>`logrotate_size`
 
 Data type: `String`
 
@@ -353,7 +353,7 @@ rotation size
 
 Default value: `'100M'`
 
-##### <a name="-quagga--bgpd--log_syslog"></a>`log_syslog`
+##### <a name="-frr--bgpd--log_syslog"></a>`log_syslog`
 
 Data type: `Boolean`
 
@@ -361,15 +361,15 @@ log to syslog
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--log_syslog_level"></a>`log_syslog_level`
+##### <a name="-frr--bgpd--log_syslog_level"></a>`log_syslog_level`
 
-Data type: `Quagga::Log_level`
+Data type: `Frr::Log_level`
 
 syslog level
 
 Default value: `'debugging'`
 
-##### <a name="-quagga--bgpd--log_syslog_facility"></a>`log_syslog_facility`
+##### <a name="-frr--bgpd--log_syslog_facility"></a>`log_syslog_facility`
 
 Data type: `Stdlib::Syslogfacility`
 
@@ -377,7 +377,7 @@ syslog facility
 
 Default value: `'daemon'`
 
-##### <a name="-quagga--bgpd--log_monitor"></a>`log_monitor`
+##### <a name="-frr--bgpd--log_monitor"></a>`log_monitor`
 
 Data type: `Boolean`
 
@@ -385,15 +385,15 @@ log to monitor
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--log_monitor_level"></a>`log_monitor_level`
+##### <a name="-frr--bgpd--log_monitor_level"></a>`log_monitor_level`
 
-Data type: `Quagga::Log_level`
+Data type: `Frr::Log_level`
 
 log to level
 
 Default value: `'debugging'`
 
-##### <a name="-quagga--bgpd--log_record_priority"></a>`log_record_priority`
+##### <a name="-frr--bgpd--log_record_priority"></a>`log_record_priority`
 
 Data type: `Boolean`
 
@@ -401,7 +401,7 @@ Data type: `Boolean`
 
 Default value: `false`
 
-##### <a name="-quagga--bgpd--log_timestamp_precision"></a>`log_timestamp_precision`
+##### <a name="-frr--bgpd--log_timestamp_precision"></a>`log_timestamp_precision`
 
 Data type: `Integer[0,6]`
 
@@ -409,7 +409,7 @@ logging precission
 
 Default value: `1`
 
-##### <a name="-quagga--bgpd--fib_update"></a>`fib_update`
+##### <a name="-frr--bgpd--fib_update"></a>`fib_update`
 
 Data type: `Boolean`
 
@@ -417,7 +417,7 @@ update the local fib
 
 Default value: `true`
 
-##### <a name="-quagga--bgpd--peers"></a>`peers`
+##### <a name="-frr--bgpd--peers"></a>`peers`
 
 Data type: `Hash`
 
@@ -427,25 +427,25 @@ Default value: `{}`
 
 ## Defined types
 
-### <a name="quagga--bgpd--peer"></a>`quagga::bgpd::peer`
+### <a name="frr--bgpd--peer"></a>`frr::bgpd::peer`
 
 set up bgpd peer
 
 #### Parameters
 
-The following parameters are available in the `quagga::bgpd::peer` defined type:
+The following parameters are available in the `frr::bgpd::peer` defined type:
 
-* [`addr4`](#-quagga--bgpd--peer--addr4)
-* [`addr6`](#-quagga--bgpd--peer--addr6)
-* [`desc`](#-quagga--bgpd--peer--desc)
-* [`inbound_routes`](#-quagga--bgpd--peer--inbound_routes)
-* [`communities`](#-quagga--bgpd--peer--communities)
-* [`multihop`](#-quagga--bgpd--peer--multihop)
-* [`password`](#-quagga--bgpd--peer--password)
-* [`prepend`](#-quagga--bgpd--peer--prepend)
-* [`default_originate`](#-quagga--bgpd--peer--default_originate)
+* [`addr4`](#-frr--bgpd--peer--addr4)
+* [`addr6`](#-frr--bgpd--peer--addr6)
+* [`desc`](#-frr--bgpd--peer--desc)
+* [`inbound_routes`](#-frr--bgpd--peer--inbound_routes)
+* [`communities`](#-frr--bgpd--peer--communities)
+* [`multihop`](#-frr--bgpd--peer--multihop)
+* [`password`](#-frr--bgpd--peer--password)
+* [`prepend`](#-frr--bgpd--peer--prepend)
+* [`default_originate`](#-frr--bgpd--peer--default_originate)
 
-##### <a name="-quagga--bgpd--peer--addr4"></a>`addr4`
+##### <a name="-frr--bgpd--peer--addr4"></a>`addr4`
 
 Data type: `Array[Stdlib::IP::Address::V4]`
 
@@ -453,7 +453,7 @@ The IPv4 address of the peer.
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--peer--addr6"></a>`addr6`
+##### <a name="-frr--bgpd--peer--addr6"></a>`addr6`
 
 Data type: `Array[Stdlib::IP::Address::V6]`
 
@@ -461,7 +461,7 @@ The IPv6 address of the peer.
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--peer--desc"></a>`desc`
+##### <a name="-frr--bgpd--peer--desc"></a>`desc`
 
 Data type: `String`
 
@@ -469,15 +469,15 @@ The description of the peer.
 
 Default value: `undef`
 
-##### <a name="-quagga--bgpd--peer--inbound_routes"></a>`inbound_routes`
+##### <a name="-frr--bgpd--peer--inbound_routes"></a>`inbound_routes`
 
-Data type: `Quagga::Routes_acl`
+Data type: `Frr::Routes_acl`
 
 The inbound routes to accept.
 
 Default value: `'none'`
 
-##### <a name="-quagga--bgpd--peer--communities"></a>`communities`
+##### <a name="-frr--bgpd--peer--communities"></a>`communities`
 
 Data type: `Array`
 
@@ -485,7 +485,7 @@ The communities to accept.
 
 Default value: `[]`
 
-##### <a name="-quagga--bgpd--peer--multihop"></a>`multihop`
+##### <a name="-frr--bgpd--peer--multihop"></a>`multihop`
 
 Data type: `Optional[Integer[1,254]]`
 
@@ -493,7 +493,7 @@ The multihop value.
 
 Default value: `undef`
 
-##### <a name="-quagga--bgpd--peer--password"></a>`password`
+##### <a name="-frr--bgpd--peer--password"></a>`password`
 
 Data type: `Optional[String]`
 
@@ -501,7 +501,7 @@ The password to use.
 
 Default value: `undef`
 
-##### <a name="-quagga--bgpd--peer--prepend"></a>`prepend`
+##### <a name="-frr--bgpd--peer--prepend"></a>`prepend`
 
 Data type: `Optional[Integer[1,32]]`
 
@@ -509,7 +509,7 @@ The prepend value.
 
 Default value: `undef`
 
-##### <a name="-quagga--bgpd--peer--default_originate"></a>`default_originate`
+##### <a name="-frr--bgpd--peer--default_originate"></a>`default_originate`
 
 Data type: `Boolean`
 
@@ -519,15 +519,15 @@ Default value: `false`
 
 ## Data types
 
-### <a name="Quagga--Log_level"></a>`Quagga::Log_level`
+### <a name="Frr--Log_level"></a>`Frr::Log_level`
 
-Quagga log level
+Frr log level
 
 Alias of `Enum['alerts', 'critical', 'debugging', 'emergencies', 'errors', 'informational', 'warnings', 'notifications']`
 
-### <a name="Quagga--Routes_acl"></a>`Quagga::Routes_acl`
+### <a name="Frr--Routes_acl"></a>`Frr::Routes_acl`
 
-Quagga routes acl
+Frr routes acl
 
 Alias of `Enum['all', 'none', 'default', 'v4default', 'v6default']`
 

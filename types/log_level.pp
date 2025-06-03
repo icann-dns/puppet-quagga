@@ -1,5 +1,5 @@
-# @summary Quagga log level
-type Quagga::Log_level = Enum[
+# @summary Frr log level
+type Frr::Log_level = Enum[
   'alerts',
   'critical',
   'debugging',

@@ -34,7 +34,7 @@
 # @param log_timestamp_precision logging precission
 # @param fib_update update the local fib
 # @param peers A hash of peers
-class quagga::bgpd (
+class frr::bgpd (
   Integer[1,4294967295]                $my_asn                   = undef,
   Stdlib::IP::Address::V4              $router_id                = undef,
   Boolean                              $enable                   = true,
@@ -50,38 +50,38 @@ class quagga::bgpd (
   Boolean                              $enable_advertisements    = true,
   Boolean                              $enable_advertisements_v4 = true,
   Boolean                              $enable_advertisements_v6 = true,
-  Stdlib::Absolutepath                 $conf_file                = '/etc/quagga/bgpd.conf',
+  Stdlib::Absolutepath                 $conf_file                = '/etc/frr/bgpd.conf',
   Stdlib::Absolutepath                 $bgpd_cmd                 = '/usr/sbin/bgpd',
   Array                                $debug_bgp                = [],
   Boolean                              $log_stdout               = false,
-  Quagga::Log_level                    $log_stdout_level         = 'debugging',
+  Frr::Log_level                    $log_stdout_level         = 'debugging',
   Boolean                              $log_file                 = false,
-  Stdlib::Absolutepath                 $log_file_path            = '/var/log/quagga/bgpd.log',
-  Quagga::Log_level                    $log_file_level           = 'debugging',
+  Stdlib::Absolutepath                 $log_file_path            = '/var/log/frr/bgpd.log',
+  Frr::Log_level                    $log_file_level           = 'debugging',
   Boolean                              $logrotate_enable         = false,
   Integer[1,100]                       $logrotate_rotate         = 5,
   String                               $logrotate_size           = '100M',
   Boolean                              $log_syslog               = false,
-  Quagga::Log_level                    $log_syslog_level         = 'debugging',
+  Frr::Log_level                    $log_syslog_level         = 'debugging',
   Stdlib::Syslogfacility               $log_syslog_facility      = 'daemon',
   Boolean                              $log_monitor              = false,
-  Quagga::Log_level                    $log_monitor_level        = 'debugging',
+  Frr::Log_level                    $log_monitor_level        = 'debugging',
   Boolean                              $log_record_priority      = false,
   Integer[0,6]                         $log_timestamp_precision  = 1,
   Boolean                              $fib_update               = true,
   Hash                                 $peers                    = {},
 ) {
-  include quagga
+  include frr
 
   ini_setting { 'bgpd':
     setting => 'bgpd',
     value   => $enable.bool2str('yes','no'),
-    path    => '/etc/quagga/daemons',
+    path    => '/etc/frr/daemons',
     section => '',
-    notify  => Service[$quagga::service],
-    require => Package[$quagga::package],
+    notify  => Service[$frr::service],
+    require => Package[$frr::package],
   }
-  # the quagga validate command runs without CAP_DAC_OVERRIDE
+  # the frr validate command runs without CAP_DAC_OVERRIDE
   # this means that even if running the command as root it cant
   # read files owned by !root
   # further to this the validate command is indeterminate. if the
@@ -91,7 +91,7 @@ class quagga::bgpd (
   # As such we need this hack
   exec { "/usr/bin/touch ${conf_file}":
     creates => $conf_file,
-    user    => $quagga::owner,
+    user    => $frr::owner,
     before  => Concat[$conf_file],
   }
   service { 'bgpd':
@@ -101,46 +101,46 @@ class quagga::bgpd (
   }
 
   concat { $conf_file:
-    require      => Package[$quagga::package],
-    owner        => $quagga::owner,
-    group        => $quagga::group,
-    mode         => $quagga::mode,
-    validate_cmd => "${bgpd_cmd} -u ${quagga::owner} -C -f %",
+    require      => Package[$frr::package],
+    owner        => $frr::owner,
+    group        => $frr::group,
+    mode         => $frr::mode,
+    validate_cmd => "${bgpd_cmd} -u ${frr::owner} -C -f %",
     notify       => Service['bgpd'],
   }
-  concat::fragment { 'quagga_bgpd_head':
+  concat::fragment { 'frr_bgpd_head':
     target  => $conf_file,
-    content => template('quagga/bgpd.conf.head.erb'),
+    content => template('frr/bgpd.conf.head.erb'),
     order   => '01',
   }
-  concat::fragment { 'quagga_bgpd_v6head':
+  concat::fragment { 'frr_bgpd_v6head':
     target  => $conf_file,
     content => "!\n address-family ipv6\n",
     order   => '30',
   }
-  concat::fragment { 'quagga_bgpd_v6foot':
+  concat::fragment { 'frr_bgpd_v6foot':
     target  => $conf_file,
-    content => template('quagga/bgpd.conf.v6foot.erb'),
+    content => template('frr/bgpd.conf.v6foot.erb'),
     order   => '50',
   }
-  concat::fragment { 'quagga_bgpd_acl':
+  concat::fragment { 'frr_bgpd_acl':
     target  => $conf_file,
-    content => template('quagga/bgpd.conf.acl.erb'),
+    content => template('frr/bgpd.conf.acl.erb'),
     order   => '80',
   }
-  concat::fragment { 'quagga_bgpd_foot':
+  concat::fragment { 'frr_bgpd_foot':
     target  => $conf_file,
     content => "line vty\n!\n",
     order   => '99',
   }
   if $log_file and $logrotate_enable {
-    logrotate::rule { 'quagga_bgp':
+    logrotate::rule { 'frr_bgp':
       path       => $log_file_path,
       rotate     => $logrotate_rotate,
       size       => $logrotate_size,
       compress   => true,
-      postrotate => '/bin/kill -USR1 `cat /var/run/quagga/bgpd.pid 2> /dev/null` 2> /dev/null || true',
+      postrotate => '/bin/kill -USR1 `cat /var/run/frr/bgpd.pid 2> /dev/null` 2> /dev/null || true',
     }
   }
-  create_resources(quagga::bgpd::peer, $peers)
+  create_resources(frr::bgpd::peer, $peers)
 }

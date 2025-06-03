@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'quagga' do
+describe 'frr' do
   # by default the hiera integration uses hiera data from the shared_contexts.rb file
   # but basically to mock hiera you first need to add a key/value pair
   # to the specific context in the spec/shared_contexts.rb file
@@ -23,10 +23,10 @@ describe 'quagga' do
       # while all required parameters will require you to add a value
       let(:params) do
         {
-          # :owner => "quagga",
-          # :group => "quagga",
+          # :owner => "frr",
+          # :group => "frr",
           # :mode => "0664",
-          # :package => "quagga",
+          # :package => "frr",
           # :enable => true,
           content: 'hostname test',
         }
@@ -40,23 +40,23 @@ describe 'quagga' do
           is_expected.to compile.with_all_deps
         end
 
-        it { is_expected.to contain_package('quagga') }
-        it { is_expected.to contain_class('Quagga') }
+        it { is_expected.to contain_package('frr') }
+        it { is_expected.to contain_class('Frr') }
 
         it do
-          is_expected.to contain_file('/etc/quagga/zebra.conf').with(
+          is_expected.to contain_file('/etc/frr/zebra.conf').with(
             content: 'hostname test',
             ensure: 'file',
-            group: 'quagga',
+            group: 'frr',
             mode: '0664',
             notify: 'Service[zebra]',
-            owner: 'quagga'
+            owner: 'frr'
           )
         end
 
         it do
-          is_expected.to contain_file('/usr/local/bin/quagga_status.sh').with(
-            content: %r{pgrep -u quagga},
+          is_expected.to contain_file('/usr/local/bin/frr_status.sh').with(
+            content: %r{pgrep -u frr},
             ensure: 'file',
             mode: '0555'
           )
@@ -65,7 +65,7 @@ describe 'quagga' do
         it do
           is_expected.to contain_file('/etc/profile.d/vtysh.sh').with(
             ensure: 'file',
-            source: 'puppet:///modules/quagga/vtysh.sh'
+            source: 'puppet:///modules/frr/vtysh.sh'
           )
         end
 
@@ -88,11 +88,11 @@ describe 'quagga' do
         context 'owner' do
           before { params.merge!(owner: 'foo') }
 
-          it { is_expected.to contain_file('/etc/quagga/zebra.conf').with_owner('foo') }
+          it { is_expected.to contain_file('/etc/frr/zebra.conf').with_owner('foo') }
 
           it do
             is_expected.to contain_file(
-              '/usr/local/bin/quagga_status.sh'
+              '/usr/local/bin/frr_status.sh'
             ).with_content(
               %r{pgrep -u foo}
             )
@@ -102,13 +102,13 @@ describe 'quagga' do
         context 'group' do
           before { params.merge!(group: 'foo') }
 
-          it { is_expected.to contain_file('/etc/quagga/zebra.conf').with_group('foo') }
+          it { is_expected.to contain_file('/etc/frr/zebra.conf').with_group('foo') }
         end
 
         context 'mode' do
           before { params.merge!(mode: '0600') }
 
-          it { is_expected.to contain_file('/etc/quagga/zebra.conf').with_mode('0600') }
+          it { is_expected.to contain_file('/etc/frr/zebra.conf').with_mode('0600') }
         end
 
         context 'package' do
@@ -132,7 +132,7 @@ describe 'quagga' do
           before { params.merge!(content: 'foo') }
 
           it do
-            is_expected.to contain_file('/etc/quagga/zebra.conf').with_content(
+            is_expected.to contain_file('/etc/frr/zebra.conf').with_content(
               %r{foo}
             )
           end

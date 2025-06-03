@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.box = 'ubuntu/trusty64'
-  config.vm.host_name = 'quagga.example.com'
+  config.vm.host_name = 'frr.example.com'
   config.vm.network "forwarded_port", guest: 443, host: 8443
 
   config.vm.provision "shell", inline: "apt-get update"
