@@ -23,6 +23,11 @@ define quagga::bgpd::peer (
 
   $my_asn = $quagga::bgpd::my_asn
 
+  $large_communities = $communities.filter |$comm| {
+    $comm =~ /^\d+:\d+:\d+$/
+  }
+  $standard_communities = $communities - $large_communities
+
   unless ($addr4 + $addr6).empty {
     concat::fragment { "bgpd_peer_${name}":
       target  => $quagga::bgpd::conf_file,
